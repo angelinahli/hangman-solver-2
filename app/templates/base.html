@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="{{title}} - Microblog">
+    <meta name="author" content="Angelina Li">
+
+    {% if title %}
+    <title>{{ title }} - Hangman Solver</title>
+    {% else %}
+    <title>Hangman Solver</title>
+    {% endif %}
+
+</head>
+
+<body>
+    <!-- navbar -->
+    <span style="text-align: right;">
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a> |
+        <a href="{{ url_for('new_game') }}">Play</a>
+    </div>
+    </span>
+    <hr>
+    
+    <!-- messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <h3>New messages</h3>
+    <ul>
+        {% for message in messages %}
+        <li>{{message}}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    
+    <!-- extended content -->
+    {% block content %}{% endblock %}
+
+    <p>Built by: <a href="www.github.com/angelinahli">Angelina Li</a></p>
+</body>
+
+</html>

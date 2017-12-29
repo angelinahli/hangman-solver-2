@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <span style="text-align: left;">
+    <div class="new_game">
+        {% if not game.lost and not game.won %}
+            <!-- title -->
+            <div class="title">
+                <h1>Play a game of hangman!</h1>
+            </div>
+            
+            <!-- display image if any -->
+            <!-- {% for line in game.img %}
+            <p>{{ line }}</p>
+            {% endfor %} -->
+            
+            <!-- word to guess -->
+            <h2>Guess so far: {{ game.get_current_guess() }}</h2>
+            <h3>The word I'm thinking of is {{ game.word_len }} letters long.</h3>
+            
+            <!-- some feedback if any -->
+            {% if game.message %}
+            <h3>{{ game.message }}</h3>
+            {% endif %}
+            
+            <!-- user input -->
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <p>Enter letter guess: {{ form.guess(size=10) }} {{ form.submit() }}</p>
+                {% for error in form.guess.errors %}
+                <span style="color: red;"><i>{{error}}</i></span><br>
+                {% endfor %}
+                {% for error in game.errors %}
+                <span style="color: red;"><i>{{error}}</i></span><br>
+                {% endfor %}
+                <p>({{ game.get_lives_left() }} wrong tries left)</p>
+            </form>
+            
+            <!-- guessed letters - formatted to a comma delimited list -->
+            {% if game.guessed_chars["correct"] or game.guessed_chars["wrong"] %}
+            <h2>Guesses</h2>
+            {% endif %}
+
+            {% if game.guessed_chars["correct"] %}
+            <p>Correct guesses: {{ game.get_correct_guesses() }}</p>
+            {% endif %}
+
+            {% if game.guessed_chars["wrong"] %}
+            <p>Wrong guesses: {{ game.get_wrong_guesses() }}</p>
+            {% endif %}
+        
+        {% elif game.won %}
+            <div class="title">
+                <h1>Congratulations - you guessed it!!</h1>
+            </div>
+            <h2>The word I was thinking of was: {{game.word}}</h2>
+        {% else %}
+            <div class="title">
+                <h1>Sorry, you lost!</h1>
+            </div>
+
+            <!-- {% for line in game.img %}
+            <p>{{ line }}</p>
+            {% endfor %} -->
+            <h2>The word I was thinking of was: {{game.word}}</h2>
+        {% endif %}
+    </div>
+    </span>
+{% endblock %}
