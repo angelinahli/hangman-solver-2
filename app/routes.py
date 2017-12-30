@@ -14,13 +14,11 @@ def index():
 
 @app.route("/new_game", methods=["GET", "POST"])
 def new_game():
-    
     form = GuessForm()
     if form.validate_on_submit():
         game.guess_char(form.guess.data)
     else:
         game.errors = [] # reset errors
-    
     return flask.render_template("new_game.html", 
         title="New Game", 
         game=game, 
