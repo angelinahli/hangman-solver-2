@@ -48,7 +48,7 @@ class Hangman:
 
 class InteractiveHangman(Hangman):
 
-    IMGS = {i: os.path.join("static", "hangman{}.png".format(i)) \
+    IMGS = {i: os.path.join("static", "img", "hangman{}.png".format(i)) \
         for i in range(1, 8)}
 
     def __init__(self, debug=False):

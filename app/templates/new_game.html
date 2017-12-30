@@ -1,76 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <span style="text-align: center;">
-    <div class="new_game">
-        {% if not game.lost and not game.won %}
-            <!-- title -->
-            <div class="title">
-                <h1>Play a game of hangman!</h1>
-            </div>
-            
-            <!-- display image if any -->
-            {% if game.img %}
-            <img src="{{ game.img }}" alt="Hangman image" width="40%">
-            {% endif %}
-            
-            <!-- word to guess -->
-            <h2>Guess so far: {{ game.get_current_guess() }}</h2>
-            <h3>The word I'm thinking of is {{ game.word_len }} letters long.</h3>
-            
-            <!-- some feedback if any -->
-            {% if game.message %}
-            <h3>{{ game.message }}</h3>
-            {% endif %}
-            
-            <!-- user input -->
-            <form action="" method="post">
-                {{ form.hidden_tag() }}
-                <p>Enter letter guess: {{ form.guess(size=10) }} {{ form.submit() }}</p>
-                {% for error in form.guess.errors %}
-                <span style="color: red;"><i>{{error}}</i></span><br>
-                {% endfor %}
-                {% for error in game.errors %}
-                <span style="color: red;"><i>{{error}}</i></span><br>
-                {% endfor %}
-                <p>({{ game.get_lives_left() }} wrong tries left)</p>
-            </form>
-            
-            <!-- guessed letters - formatted to a comma delimited list -->
-            {% if game.guessed_chars["correct"] or game.guessed_chars["wrong"] %}
-            <h2>Guesses</h2>
-            {% endif %}
-
-            {% if game.guessed_chars["correct"] %}
-            <p>Correct guesses: {{ game.get_correct_guesses() }}</p>
-            {% endif %}
-
-            {% if game.guessed_chars["wrong"] %}
-            <p>Wrong guesses: {{ game.get_wrong_guesses() }}</p>
-            {% endif %}
+    {% if not game.lost and not game.won %}
+        <!-- title -->
+        <div class="title">
+            <h1>Play a game of hangman!</h1>
+        </div>
         
-        {% elif game.won %}
-            <div class="title">
-                <h1>Congratulations - you guessed it!!</h1>
-            </div>
-
-            {% if game.img %}
-            <img src="{{ game.img }}" alt="Hangman image" width="40%">
-            {% endif %}
-
-            <h2>The word I was thinking of was: {{game.word}}</h2>
-        
-        {% else %}
-            <div class="title">
-                <h1>Sorry, you lost!</h1>
-            </div>
-
-            {% if game.img %}
-            <img src="{{ game.img }}" alt="Hangman image" width="40%">
-            {% endif %}
-
-            <h2>The word I was thinking of was: {{game.word}}</h2>
+        <!-- display image if any -->
+        {% if game.img %}
+        <img src="{{ game.img }}" alt="Hangman image" width="40%">
         {% endif %}
-    </div>
-    </span>
+        
+        <!-- word to guess -->
+        <h2>Guess so far: <span style="color: #333333;">{{ game.get_current_guess() }}</span></h2>
+        <h3>The word I'm thinking of is {{ game.word_len }} letters long.</h3>
+        
+        <!-- some feedback if any -->
+        {% if game.message %}
+        <h3>{{ game.message }}</h3>
+        {% endif %}
+        
+        <!-- user input -->
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>Enter letter guess: {{ form.guess(size=10) }} {{ form.submit() }}</p>
+            {% for error in form.guess.errors %}
+            <span style="color: red;"><i>{{error}}</i></span><br>
+            {% endfor %}
+            {% for error in game.errors %}
+            <span style="color: red;"><i>{{error}}</i></span><br>
+            {% endfor %}
+            <p>({{ game.get_lives_left() }} wrong tries left)</p>
+        </form>
+        
+        <!-- guessed letters - formatted to a comma delimited list -->
+        {% if game.guessed_chars["correct"] or game.guessed_chars["wrong"] %}
+        <h2>Guesses</h2>
+        {% endif %}
+
+        {% if game.guessed_chars["correct"] %}
+        <p>Correct guesses: {{ game.get_correct_guesses() }}</p>
+        {% endif %}
+
+        {% if game.guessed_chars["wrong"] %}
+        <p>Wrong guesses: {{ game.get_wrong_guesses() }}</p>
+        {% endif %}
+    
+    {% else %}
+
+        {% if game.won %}
+        <div class="title">
+            <h1>Congratulations - you guessed it!!</h1>
+        </div>
+        {% else %}
+        <div class="title">
+            <h1>Sorry, you lost!</h1>
+        </div>
+        {% endif %}
+
+        {% if game.img %}
+        <img src="{{ game.img }}" alt="Hangman image" width="40%">
+        {% endif %}
+
+        <h2>The word I was thinking of was: <span style="color: #333333;">{{ game.word }}</span></h2>
+    {% endif %}
 {% endblock %}
