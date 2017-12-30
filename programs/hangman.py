@@ -1,12 +1,11 @@
+import os
 import random
-
-# from data.hangman_images import images
 
 class Hangman:
 
-    TOTAL_LIVES = 5
+    TOTAL_LIVES = 7
 
-    def __init__(self, word, debug=False):
+    def __init__(self, word):
         self.word = word
         self.len_word_set = len(set(self.word))
         self.guessed_chars = {"correct": [], "wrong": []}
@@ -34,23 +33,24 @@ class Hangman:
 
     def guess_char(self, char):
         # message resets each time
-        check_char = char.lower()
 
-        if check_char in self.word:
-            self.guessed_chars["correct"].append(check_char)
+        if char in self.word:
+            self.guessed_chars["correct"].append(char)
         else:
-            self.guessed_chars["wrong"].append(check_char)
+            self.guessed_chars["wrong"].append(char)
             self.lives_used += 1
 
         self._check_lost()
         self._check_won()
 
+
 class InteractiveHangman(Hangman):
 
-    # IMGS = {i + 1: img.split("\n") for i, img in enumerate(images)}
+    IMGS = {i: reduce(os.path.join, ["static", "hangman{}.png".format(i)]) \
+        for i in range(1, 8)}
 
     def __init__(self, debug=False):
-        Hangman.__init__("goldilocks", debug) # fix
+        Hangman.__init__(self, "goldilocks") # fix
         
         # initialize word
         self.word_len = len(self.word)
@@ -58,7 +58,7 @@ class InteractiveHangman(Hangman):
         # user feedback vars
         self.message = ""
         self.errors = []
-        # self.img = []
+        self.img = ""
         self.debug = debug
 
     # --- helper methods --- #
@@ -78,14 +78,6 @@ class InteractiveHangman(Hangman):
     def _check_valid_guess(self, char):
         self._check_errors(char)
         return len(self.errors) == 0
-
-    def _check_lost(self):
-        if self.lives_used >= self.TOTAL_LIVES:
-            self.lost = True
-
-    def _check_won(self):
-        if len(self.guessed_chars.get("correct")) == len(set(self.word)):
-            self.won = True
 
     # --- public methods --- #
 
@@ -108,21 +100,22 @@ class InteractiveHangman(Hangman):
         return ", ".join(sorted(self.guessed_chars["wrong"]))
 
     def guess_char(self, char):
-        # message resets each time
+        # message and errors reset each time
+        self.errors = []
         self.message = ""
         check_char = char.lower()
         valid_guess = self._check_valid_guess(check_char)
 
         if valid_guess:
             if check_char in self.word:
-                self.message = "Good guess!"
                 self.guessed_chars["correct"].append(check_char)
+                self.message = "Good guess!"
             else:
-                self.message = "Sorry, try again."
                 self.guessed_chars["wrong"].append(check_char)
+                self.message = "Sorry, try again."
                 self.lives_used += 1
-            
-            # self.img = self.IMGS.get(self.num_tries)
+                self.img = self.IMGS.get(self.lives_used)
+
             self._check_lost()
             self._check_won()
 
@@ -132,4 +125,11 @@ class InteractiveHangman(Hangman):
             print("Message:", self.message)
             print("Guessed chars:", self.guessed_chars)
             print("Current guess:", self.get_current_guess())
-            
+
+class AutomaticHangman(Hangman):
+    """
+    Class will, given a word, play an automatic game of hangman
+    """
+    
+    def __init__(self, word):
+        Hangman.__init__(self, word)

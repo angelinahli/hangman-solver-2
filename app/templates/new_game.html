@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <span style="text-align: left;">
+    <span style="text-align: center;">
     <div class="new_game">
         {% if not game.lost and not game.won %}
             <!-- title -->
@@ -10,9 +10,9 @@
             </div>
             
             <!-- display image if any -->
-            <!-- {% for line in game.img %}
-            <p>{{ line }}</p>
-            {% endfor %} -->
+            {% if game.img %}
+            <img src="{{ game.img }}" alt="Hangman image" width="40%">
+            {% endif %}
             
             <!-- word to guess -->
             <h2>Guess so far: {{ game.get_current_guess() }}</h2>
@@ -53,15 +53,22 @@
             <div class="title">
                 <h1>Congratulations - you guessed it!!</h1>
             </div>
+
+            {% if game.img %}
+            <img src="{{ game.img }}" alt="Hangman image" width="40%">
+            {% endif %}
+
             <h2>The word I was thinking of was: {{game.word}}</h2>
+        
         {% else %}
             <div class="title">
                 <h1>Sorry, you lost!</h1>
             </div>
 
-            <!-- {% for line in game.img %}
-            <p>{{ line }}</p>
-            {% endfor %} -->
+            {% if game.img %}
+            <img src="{{ game.img }}" alt="Hangman image" width="40%">
+            {% endif %}
+
             <h2>The word I was thinking of was: {{game.word}}</h2>
         {% endif %}
     </div>
