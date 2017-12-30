@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="title">
+    <h1>Solve a word you're struggling with</h1>
+</div>
+
+<h2>Enter the word you want to solve below</h2>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    
+    <p>Word: {{ form.word(size=15) }}</p>
+    <p>Please use the symbol '{{ solver.UNKNOWN }}' to mark characters you don't know yet.<br>
+    e.g. {{ solver.WORD_EXAMPLE }}</p>
+    <!-- errors -->
+    {% for error in form.word.errors %}
+    <span style="color: red;"><i>{{error}}</i></span><br>
+    {% endfor %}
+    {% for error in solver.word_errors %}
+    <span style="color: red;"><i>{{error}}</i></span><br>
+    {% endfor %}
+
+    <p>Wrong guesses: {{ form.wrong_chars(size=15) }}</p>
+    <p>Please enter any characters you've guessed wrong so far.</p>
+    <!-- errors -->
+    {% for error in form.wrong_chars.errors %}
+    <span style="color: red;"><i>{{error}}</i></span><br>
+    {% endfor %} 
+    {% for error in solver.wrong_char_errors %}
+    <span style="color: red;"><i>{{error}}</i></span><br>
+    {% endfor %}
+    <p>{{ form.submit() }}</p>
+</form>
+{% if solver %}
+    <hr>
+    <h3>Best character to guess next: {{solver.}}</h3>
+{% endif %}
+{% endblock %}

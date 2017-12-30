@@ -45,7 +45,6 @@ class Hangman:
         self._check_lost()
         self._check_won()
 
-
 class InteractiveHangman(Hangman):
 
     IMGS = {i: os.path.join("static", "img", "hangman{}.png".format(i)) \
@@ -66,24 +65,29 @@ class InteractiveHangman(Hangman):
     # --- helper methods --- #
 
     def _choose_random_word(self):
+        # should really choose with weights somehow.
         list_key = random.choice(list(sorted_words.keys()))
         return random.choice(sorted_words[list_key])
 
     def _check_errors(self, char):
-        not_alpha = not char.isalpha()
-        not_single_char = len(char) > 1
-        not_new_guess = char in self.guessed_chars["correct"] or \
-            char in self.guessed_chars["wrong"]
-        errors = {
-            not_alpha: "Please enter a character from A-Z.",
-            not_single_char: "Please enter one character guess at a time.",
-            not_new_guess: "You've already guessed this character!"
-        }
-        self.errors = [msg for error, msg in errors.items() if error]
+        errors = []
+        if not char.isalpha():
+            errors.append("Please enter a character from A-Z.")
+        if len(char) > 1:
+            errors.append("Please enter one character guess at a time.")
+        if char in self.guessed_chars["correct"] or \
+                char in self.guessed_chars["wrong"]:
+            errors.append("You've already guessed this character!")
+
+        self.errors = errors
 
     def _check_valid_guess(self, char):
         self._check_errors(char)
         return len(self.errors) == 0
+
+    def _get_check_char(self, char):
+        """return a char to use to test validity and to play the game"""
+        return char.lower().strip()
 
     # --- public methods --- #
 
@@ -109,7 +113,7 @@ class InteractiveHangman(Hangman):
         # message and errors reset each time
         self.errors = []
         self.message = ""
-        check_char = char.lower()
+        check_char = self._get_check_char(char)
         valid_guess = self._check_valid_guess(check_char)
 
         if valid_guess:
@@ -134,8 +138,7 @@ class InteractiveHangman(Hangman):
 
 class AutomaticHangman(Hangman):
     """
-    Class will, given a word, play an automatic game of hangman
+    Class will, given a word, simulate an automatic game of hangman
     """
-    
     def __init__(self, word):
         Hangman.__init__(self, word)

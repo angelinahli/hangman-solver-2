@@ -1,116 +1,143 @@
-"""
-A simple Python based hangman solver.
+import re
+from collections import Counter
 
-One flaw with this program is that it uses letter based frequency analysis, as opposed to
-a word based analysis. Hence, it implicitly weights all words as equally likely to appear
-in a hangman game -- additional data weighting the actual frequency of words that appear
-in the context of a hangman game could be used to improve this model.
-"""
+from programs.vocabulary import sorted_words
 
-# vocabulary stored in dictionary sorted by length
-from vocabulary import sorted_words
+class Solver:
 
-##### PT 1: Find the words that might match. #####
+    UNKNOWN = "?"
 
-def get_possible_words(input_word, wrong_chars, candidate_words):
-	"""Given an input word in the format 'p??ho?', wrong characters in 
-	dct form {'e': True, 'f': True, 'g': True} and a starting list of
-	candidate words, returns a list of possible word matches."""
+    def __init__(self, word, wrong_chars):
+        """
+        word is in format 'p??ho?'
+        wrong_chars = list of wrong characters
+        """
+        self.word = word
+        self.wrong_chars = wrong_chars
+        self.candidate_words = self._get_candidate_words()
+        self.count_chars = self._get_count_chars()
 
-	new_candidates = []
+    # --- helper methods --- #
 
-	for guess in candidate_words:
-		if not matching_letters(input_word, guess):
-			continue  # implicitly discard if wrong
-		if not contains_no_wrong_letters(wrong_chars, guess):
-			continue  # implicitly discard if wrong
-		new_candidates.append(guess)
+    def _all_known_chars_match(self, candidate_word):
+        """
+        Will return whether the known characters in self.word match the
+        corresponding indices of the candidate word
+        """
+        for i, char in enumerate(self.word):
+            if char != UNKNOWN and char != candidate_word[i]:
+                return False
+        return True
 
-	return new_candidates
+    def _contains_no_wrong_chars(self, candidate_word):
+        """
+        Will return whether any of the characters in the candidate_word are
+        known to be wrong.
+        """
+        for char in self.wrong_chars:
+            if char in candidate_word:
+                return False
+        return True
 
-# helper functions
+    def _get_candidate_words(self):
+        """
+        Returns a list of words:
+        * that have the same length as self.word
+        * whose characters match the known characters in self.word
+        * that do not contain any characters known to be wrong
+        """
+        candidate_words = []
+        # start with words of same length
+        matching_lengths = sorted_words.get(len(self.word), [])
 
-def matching_letters(input_word, guess):
-	"""Given an input word in form 'p??ho?' of the same length as the candidate guess,
-	   returns whether the known letters in the input word match the corresponding indices
-	   of the candidate guess"""
-	for i in range(len(input_word)):
-		if input_word[i] != '?' and input_word[i] != guess[i]:
-			return False
-	return True
+        for word in matching_lengths:
+            if self._all_known_chars_match(word) and \
+                    self._contains_no_wrong_chars(word):
+                candidate_words.append(word)
+        return candidate_words
 
-def contains_no_wrong_letters(wrong_chars, guess):
-	"""Given a dictionary of wrong char guesses, determines whether or not a candidate word 
-	contains any letters known to be wrong."""
-	guess_chars = set(list(guess)) # iterate only over the unique letters in guess
-	for char in guess_chars:
-		if char in wrong_chars:
-			return False
-	return True
+    def _get_count_chars(self):
+        """
+        Returns a Counter object containing counts of all unguessed chars in
+        candidate words.
+        """
+        count_chars = Counter()
+        for word in self.candidate_words:
+            # implicitly weights chars that show up more often in words greater
+            # (i.e. a char that shows up two times will be double counted)
+            unguessed_chars = filter(lambda c: c not in input_word, word)
+            for char in unguessed_chars:
+                count_chars[char] += 1
+        return count_chars
 
+    # --- public/user facing methods --- #
 
-##### PT 2: Find the optimal words to try. #####
+    def get_next_guess(self):
+        return self.count_chars.most_common(1)[0][0] # 1st el of 1st tup
 
-def get_top_letters(input_word, possible_words):
-	"""Given an input word guess, and a list of potential words that match up with this word guess,
-	   determines which letters to try next. 
-	   Returns list of letter tuples in the format 
-	   (letter, probability of matching), sorted by prob accuracy."""
+    def get_top_chars(self, n=5):
+        """
+        Return list of top characters to guess in order
+        """
+        return [char_tup[0] for char_tup in self.count_chars.most_common(n)]
 
-	# all candidates come in lower char form only, so no need to lower again.
-	candidate_chars = {}
+    def get_possible_words(self):
+        return self.candidate_words
 
-	for guess in possible_words:
-		# set of letters not already guessed.
-		# implicitly weights matching 2 letters in a word as having the same value as matching 1
-		unguessed_chars = set(filter(lambda char: char not in input_word, guess))
-		for c in unguessed_chars:
-			candidate_chars[c] = candidate_chars.get(c, 0) + 1
-	
-	chars = sorted(
-		candidate_chars.items(), 
-		key=lambda letter_tup: letter_tup[1], 
-		reverse=True)
-	char_probs = [(char_tup[0], float(char_tup[1])/len(possible_words)) for char_tup in chars]
-	return char_probs
+class SolverChecker:
+    """
+    Before running a game of Interactive Solver, will first see whether or not
+    the user inputted data is valid.
+    """
 
-##### PT 3: Several run options. #####
+    def __init__(self):
+        self.word_errors = []
+        self.wrong_char_errors = []
 
-def print_message(input_word, top_letters, possible_words):
-	print "\nYour current guess: {guess}".format(guess=input_word.upper())
-	print "\nTop letters to guess next:\n"
-	for letter in top_letters[:5]:
-		print "{char}: {prob}% probability of match".format(
-			char = letter[0].upper(), 
-			prob = round(letter[1]*100, 2))
-	print "\nPossible words (total {word_count}):\n".format(
-		word_count = len(possible_words))
-	for candidate in possible_words:
-		print candidate
+    # --- helper methods --- #
 
-def run(input_word, wrong_chars):
-	"""input_word = string formatted as 'p??ho?' with '?'s for missing values;
-	   wrong_chars = any iterative of wrong_chars 
-	   prints top letters to try.
-	"""
-	# ensure input_word formatting correct
-	input_word = input_word.lower()
-	# ensure wrong_chars formatting correct
-	if not isinstance(wrong_chars, dict):
-		wrong_chars = {char: True for char in wrong_chars}
-	candidate_words = sorted_words[len(input_word)]
-	possible_words = get_possible_words(input_word, wrong_chars, candidate_words)
-	top_letters = get_top_letters(input_word, possible_words)
-	print_message(input_word, top_letters, possible_words)
+    def _check_word_errors(self, word):
+        pass
 
-def run_interactive():
-	input_word = raw_input("Enter your hangman guess here. Enter words you know, and use ? for words you don't know. e.g. 'h?e???' ").lower().strip("'")
-	wrong_chars = raw_input("What words have you tried and gotten wrong before? enter with no spaces, e.g. 'acrq' ").lower().strip("'")
+    def _check_wrong_char_errors(self, wrong_chars):
+        pass
 
-	run(input_word, wrong_chars)
+    # --- public facing methods --- #
 
+    def is_valid_word(self, word):
+        pass
 
-##### PT 4: Testing #####
+    def is_valid_wrong_chars(self, wrong_chars):
+        pass
 
-if __name__ == '__main__':
-	run_interactive()
+class InteractiveSolver(Solver, SolverChecker):
+
+    WORD_EXAMPLE = "py?t?n"
+
+    def __init__(self, word, wrong_chars):
+        self.valid_entry = False
+        SolverChecker.__init__()
+        check_word = self._get_check_word(word)
+        check_wrong_chars = self._get_check_wrong_chars(wrong_chars)
+
+        if self.is_valid_word(check_word) and \
+                self.is_valid_wrong_chars(check_wrong_chars):
+            self.valid_entry = True
+            Solver.__init__(word, wrong_chars)
+            self.errors = []
+
+    # --- helper methods --- #
+
+    def _get_check_word(self, word):
+        return word.lower().strip()
+
+    def _get_check_wrong_chars(self, wrong_chars):
+        return list(re.sub("", "", wrong_chars).lower())
+
+    # --- public/user facing methods --- #
+
+    def get_next_guess(self):
+        try:
+            return Solver.get_next_guess(self)
+        except IndexError:
+            return "N/A"
