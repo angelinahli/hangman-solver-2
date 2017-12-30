@@ -5,8 +5,13 @@
         <h1>Welcome to the Hangman Solver!</h1>
     </div>
 
-    <h2>How to play Hangman</h2>
+    <!-- <h2>How to play Hangman</h2>
     <ol>
         <li></li>
-    </ol>
+    </ol> -->
+
+    <h2>About</h2>
+    <p>This app uses character frequency analysis to find the optimal next best guesses for any hangman word you want to solve.</p>
+
+    <p><a href="{{ url_for('new_game') }}">Play</a> a game of hangman against the computer, <a href="{{ url_for('solve_word') }}">solve</a> a word you're struggling with, or <a href="{{ url_for('test_word') }}">test</a> your favorite hangman words to see how well they fare.</p>
 {% endblock %}

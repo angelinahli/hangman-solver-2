@@ -1,6 +1,7 @@
 import os
 import random
 
+from programs.solver import Solver
 from programs.vocabulary import sorted_words
 
 class Hangman:
@@ -8,7 +9,7 @@ class Hangman:
     TOTAL_LIVES = 7
 
     def __init__(self, word):
-        self.word = word
+        self.word = word.lower()
         self.len_word_set = len(set(self.word))
         self.guessed_chars = {"correct": [], "wrong": []}
         self.lives_used = 0
@@ -65,8 +66,10 @@ class InteractiveHangman(Hangman):
     # --- helper methods --- #
 
     def _choose_random_word(self):
-        # should really choose with weights somehow.
-        list_key = random.choice(list(sorted_words.keys()))
+        list_key = random.choices(
+            list(sorted_words.keys()), 
+            weights=[len(val) for val in sorted_words.values()],
+            k=1)[0]
         return random.choice(sorted_words[list_key])
 
     def _check_errors(self, char):
@@ -136,9 +139,49 @@ class InteractiveHangman(Hangman):
             print("Guessed chars:", self.guessed_chars)
             print("Current guess:", self.get_current_guess())
 
-class AutomaticHangman(Hangman):
+class SimulateHangman:
     """
     Class will, given a word, simulate an automatic game of hangman
     """
-    def __init__(self, word):
-        Hangman.__init__(self, word)
+    def __init__(self):
+        self.errors = []
+        self.game = None
+
+    # --- helper methods --- #
+
+    def _get_current_guess(self):
+        current_word = []
+        for c in self.game.word:
+            if c in self.game.guessed_chars["correct"]:
+                current_word.append(c)
+            else:
+                current_word.append(Solver.UNKNOWN)
+        return "".join(current_word)
+
+    def _simulate_one_step(self):
+        solver = Solver(self._get_current_guess(), self.game.guessed_chars["wrong"])
+        next_char = solver.get_next_guess()
+        if next_char != "N/A":
+            self.game.guess_char(next_char)
+        return next_char
+
+    def _simulate_game(self):
+        invalid_next_char = False
+        # to prevent infinite loop in the case where the word is not in our corpus
+        while(not self.game.won and not invalid_next_char):
+            next_char = self._simulate_one_step()
+            if next_char == "N/A":
+                invalid_next_char = True
+        if invalid_next_char:
+            self.errors.append("I don't recognize this word. Sorry!")
+
+    # --- main methods --- #
+
+    def simulate(self, word):
+        # re initialize errors
+        self.errors = []
+        self.game = Hangman(word)
+        self._simulate_game()
+
+    def get_wrong_tries(self):
+        return len(self.game.guessed_chars.get("wrong"))

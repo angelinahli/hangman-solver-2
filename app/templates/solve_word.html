@@ -2,17 +2,14 @@
 
 {% block content %}
 <div class="title">
-    <h1>Solve a word</h1>
+    <h1>Solve a word<br></h1>
 </div>
 
-<h2>Enter the word you want to solve below</h2>
-<hr>
 <form action="" method="post">
     {{ form.hidden_tag() }}
     
     <p>Word: {{ form.word(size=15) }}</p>
-    <p>Please use the symbol '{{ solver.UNKNOWN }}' to mark characters you don't know yet.<br>
-    e.g. {{ solver.WORD_EXAMPLE }}</p>
+    <p>Please use the symbol '{{ solver.UNKNOWN }}' to mark characters you haven't guessed yet. e.g. {{ solver.WORD_EXAMPLE }}</p>
     <!-- errors -->
     {% for error in form.word.errors %}
     <span style="color: red;"><i>{{ error }}</i></span><br>
@@ -21,7 +18,7 @@
     <span style="color: red;"><i>{{ error }}</i></span><br>
     {% endfor %}
 
-    <p>Wrong guesses: {{ form.wrong_chars(size=15) }}</p>
+    <p><br>Wrong guesses: {{ form.wrong_chars(size=15) }}</p>
     <p>Please enter any characters you've guessed wrong so far.</p>
     <!-- errors -->
     {% for error in form.wrong_chars.errors %}
@@ -31,22 +28,27 @@
     <p>{{ form.submit() }}</p>
 </form>
 
-<!-- this solution feels kind of hacky -->
+<!-- this solution feels kind of hacky and not in a good way :/ -->
 {% if solver and solver.solver %}
     <hr>
-    <h3>Best character to guess next: {{ solver.get_next_guess() }}</h3>
-    <h4>Here are words you might want to try:</h4>
-    
-    <div class="row">
-        <ul>
-            {% for word in solver.get_possible_words() %}
-            <li>{{ word }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    
-    {% for error in solver.errors %}
-    <h3><span style="color: red;">{{ error }}</span></h3>
-    {% endfor %}
+    <!-- honestly this feels hacky as well. 
+        this is because get_next_guess will update errors -->
+    {% with next_guess = solver.get_next_guess() %}
+    {% if solver.errors %}
+        {% for error in solver.errors %}
+        <h3><span style="color: red;">{{ error }}</span></h3>
+        {% endfor %}
+    {% else %}
+        <h3>Best character to guess next: {{ next_guess }}</h3>
+        <h4><br>Here are some words this might be:</h4>
+        <div class="row">
+            <ul>
+                {% for word in solver.get_possible_words() %}
+                <li>{{ word }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% endwith %}
 {% endif %}
 {% endblock %}

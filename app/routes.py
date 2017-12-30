@@ -37,7 +37,13 @@ def solve_word():
         solver=solver,
         form=form)
 
-@app.route("/test_word")
+@app.route("/test_word", methods=["GET", "POST"])
 def test_word():
+    form = TestForm()
+    simulator = SimulateHangman()
+    if form.validate_on_submit():
+        simulator.simulate(form.word.data)
     return flask.render_template("test_word.html",
-        title="Test Word")
+        title="Test Word",
+        simulator=simulator,
+        form=form)

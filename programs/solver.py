@@ -76,7 +76,10 @@ class Solver:
     # --- public/user facing methods --- #
 
     def get_next_guess(self):
-        return self.count_chars.most_common(1)[0][0] # 1st el of 1st tup
+        try:
+            return self.count_chars.most_common(1)[0][0] # 1st el of 1st tup
+        except IndexError:
+            return "N/A" # if the list is empty
 
     def get_top_chars(self, n=5):
         """
@@ -105,14 +108,22 @@ class InteractiveSolver:
 
     def _check_word_errors(self, word):
         errors = []
+        invalid_chars = False
+
         for char in word:
             if not char.isalpha() and char != Solver.UNKNOWN:
+                invalid_chars = True
                 msg = ("Please enter only characters from A-Z and the " + 
                     "symbol {unknown} for unknown chars. e.g. {ex}").format(
                         unknown=Solver.UNKNOWN,
                         ex=self.WORD_EXAMPLE)
                 errors.append(msg)
                 break
+        
+        if not invalid_chars and self.UNKNOWN not in word:
+            errors.append("Looks like you've already solved this word! " +
+                "Please enter an unsolved word here.")
+        
         self.word_errors = errors
 
     def _is_valid_word(self, word):
@@ -140,8 +151,7 @@ class InteractiveSolver:
         return self.solver.candidate_words
 
     def get_next_guess(self):
-        try:
-            return self.solver.get_next_guess()
-        except IndexError:
+        next_guess = self.solver.get_next_guess()
+        if next_guess == "N/A":
             self.errors.append("Sorry! Couldn't solve this word :(")
-            return "N/A"
+        return next_guess
