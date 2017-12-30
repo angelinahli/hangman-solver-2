@@ -10,10 +10,6 @@ Minimalist flask app built around an [old hangman solver program](url-to-my-old-
 5. stats.html - display some stats about which words do better on hangman overall.
 
 ## To do
-* rewrite your initial hangman program for code compactness + to make more object oriented
 * modify new_game.html to play a new game each time you refresh
-* modify new_game.html to include a hangman graphic and standardize the number of lives you have.
 * modify index.html to include more information about this game and the rules of hangman.
-* start check_word.html
-* start solver.html
-* start stats.html
+* fix solver.InteractiveSolver._get_check_wrong_chars (look up the regex)

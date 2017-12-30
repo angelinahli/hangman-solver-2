@@ -14,7 +14,7 @@
         
         <!-- word to guess -->
         <h2>Guess so far: <span style="color: #333333;">{{ game.get_current_guess() }}</span></h2>
-        <h3>The word I'm thinking of is {{ game.word_len }} letters long.</h3>
+        <h3><br>The word I'm thinking of is {{ game.word_len }} letters long.</h3>
         
         <!-- some feedback if any -->
         {% if game.message %}
@@ -63,6 +63,6 @@
         <img src="{{ game.img }}" alt="Hangman image" width="40%">
         {% endif %}
 
-        <h2>The word I was thinking of was: <span style="color: #333333;">{{ game.word }}</span></h2>
+        <h2><br>The word I was thinking of was: <span style="color: #333333;">{{ game.word }}</span></h2>
     {% endif %}
 {% endblock %}

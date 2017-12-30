@@ -2,10 +2,11 @@
 
 {% block content %}
 <div class="title">
-    <h1>Solve a word you're struggling with</h1>
+    <h1>Solve a word</h1>
 </div>
 
 <h2>Enter the word you want to solve below</h2>
+<hr>
 <form action="" method="post">
     {{ form.hidden_tag() }}
     
@@ -14,25 +15,38 @@
     e.g. {{ solver.WORD_EXAMPLE }}</p>
     <!-- errors -->
     {% for error in form.word.errors %}
-    <span style="color: red;"><i>{{error}}</i></span><br>
+    <span style="color: red;"><i>{{ error }}</i></span><br>
     {% endfor %}
     {% for error in solver.word_errors %}
-    <span style="color: red;"><i>{{error}}</i></span><br>
+    <span style="color: red;"><i>{{ error }}</i></span><br>
     {% endfor %}
 
     <p>Wrong guesses: {{ form.wrong_chars(size=15) }}</p>
     <p>Please enter any characters you've guessed wrong so far.</p>
     <!-- errors -->
     {% for error in form.wrong_chars.errors %}
-    <span style="color: red;"><i>{{error}}</i></span><br>
+    <span style="color: red;"><i>{{ error }}</i></span><br>
     {% endfor %} 
-    {% for error in solver.wrong_char_errors %}
-    <span style="color: red;"><i>{{error}}</i></span><br>
-    {% endfor %}
+
     <p>{{ form.submit() }}</p>
 </form>
-{% if solver %}
+
+<!-- this solution feels kind of hacky -->
+{% if solver and solver.solver %}
     <hr>
-    <h3>Best character to guess next: {{solver.}}</h3>
+    <h3>Best character to guess next: {{ solver.get_next_guess() }}</h3>
+    <h4>Here are words you might want to try:</h4>
+    
+    <div class="row">
+        <ul>
+            {% for word in solver.get_possible_words() %}
+            <li>{{ word }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    {% for error in solver.errors %}
+    <h3><span style="color: red;">{{ error }}</span></h3>
+    {% endfor %}
 {% endif %}
 {% endblock %}

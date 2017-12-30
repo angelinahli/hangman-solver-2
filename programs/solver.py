@@ -4,6 +4,9 @@ from collections import Counter
 from programs.vocabulary import sorted_words
 
 class Solver:
+    """
+    Solver class: Has the ability to solve one word.
+    """
 
     UNKNOWN = "?"
 
@@ -25,7 +28,7 @@ class Solver:
         corresponding indices of the candidate word
         """
         for i, char in enumerate(self.word):
-            if char != UNKNOWN and char != candidate_word[i]:
+            if char != self.UNKNOWN and char != candidate_word[i]:
                 return False
         return True
 
@@ -65,7 +68,7 @@ class Solver:
         for word in self.candidate_words:
             # implicitly weights chars that show up more often in words greater
             # (i.e. a char that shows up two times will be double counted)
-            unguessed_chars = filter(lambda c: c not in input_word, word)
+            unguessed_chars = filter(lambda c: c not in self.word, word)
             for char in unguessed_chars:
                 count_chars[char] += 1
         return count_chars
@@ -84,60 +87,61 @@ class Solver:
     def get_possible_words(self):
         return self.candidate_words
 
-class SolverChecker:
+class InteractiveSolver:
     """
-    Before running a game of Interactive Solver, will first see whether or not
-    the user inputted data is valid.
+    Instead of checking one word, will check words when they are given to it.
+    Contains a solver
     """
 
+    UNKNOWN = "?"
+    WORD_EXAMPLE = "py?t?n"
+
     def __init__(self):
+        self.errors = []
         self.word_errors = []
-        self.wrong_char_errors = []
+        self.solver = None
 
     # --- helper methods --- #
 
     def _check_word_errors(self, word):
-        pass
+        errors = []
+        for char in word:
+            if not char.isalpha() and char != Solver.UNKNOWN:
+                msg = ("Please enter only characters from A-Z and the " + 
+                    "symbol {unknown} for unknown chars. e.g. {ex}").format(
+                        unknown=Solver.UNKNOWN,
+                        ex=self.WORD_EXAMPLE)
+                errors.append(msg)
+                break
+        self.word_errors = errors
 
-    def _check_wrong_char_errors(self, wrong_chars):
-        pass
-
-    # --- public facing methods --- #
-
-    def is_valid_word(self, word):
-        pass
-
-    def is_valid_wrong_chars(self, wrong_chars):
-        pass
-
-class InteractiveSolver(Solver, SolverChecker):
-
-    WORD_EXAMPLE = "py?t?n"
-
-    def __init__(self, word, wrong_chars):
-        self.valid_entry = False
-        SolverChecker.__init__()
-        check_word = self._get_check_word(word)
-        check_wrong_chars = self._get_check_wrong_chars(wrong_chars)
-
-        if self.is_valid_word(check_word) and \
-                self.is_valid_wrong_chars(check_wrong_chars):
-            self.valid_entry = True
-            Solver.__init__(word, wrong_chars)
-            self.errors = []
-
-    # --- helper methods --- #
+    def _is_valid_word(self, word):
+        self._check_word_errors(word)
+        return len(self.word_errors) == 0
 
     def _get_check_word(self, word):
         return word.lower().strip()
 
     def _get_check_wrong_chars(self, wrong_chars):
-        return list(re.sub("", "", wrong_chars).lower())
+        # non alpha numeric
+        return list(set(re.sub("", "", wrong_chars).lower()))
 
     # --- public/user facing methods --- #
 
+    def solve(self, word, wrong_chars):
+        # 'resets' the solver
+        self.solver = None
+        check_word = self._get_check_word(word)
+        check_wrong_chars = self._get_check_wrong_chars(wrong_chars)
+        if self._is_valid_word(check_word):
+            self.solver = Solver(check_word, check_wrong_chars)
+
+    def get_possible_words(self):
+        return self.solver.candidate_words
+
     def get_next_guess(self):
         try:
-            return Solver.get_next_guess(self)
+            return self.solver.get_next_guess()
         except IndexError:
+            self.errors.append("Sorry! Couldn't solve this word :(")
             return "N/A"
