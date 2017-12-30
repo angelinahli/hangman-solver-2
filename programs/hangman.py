@@ -141,7 +141,8 @@ class InteractiveHangman(Hangman):
 
 class SimulateHangman:
     """
-    Class will, given a word, simulate an automatic game of hangman
+    Represents an object that will, given a word,
+    simulate an automatic game of hangman against the Solver algorithm
     """
     def __init__(self):
         self.errors = []
@@ -185,3 +186,37 @@ class SimulateHangman:
 
     def get_wrong_tries(self):
         return len(self.game.guessed_chars.get("wrong"))
+
+class StatsHangman(SimulateHangman):
+    """
+    Represents an object that will, given a word,
+    generate summary statistics about an automatic game of hangman played using
+    that word and the Solver algorithm
+    """
+
+    # unusual characters are defined as characters in the last quartile of 
+    # frequency usage, taken from:
+    # https://en.oxforddictionaries.com/explore/which-letters-are-used-most
+    UNUSUAL_CHARS = "wkvxzjq"
+
+    def __init__(self):
+        SimulateHangman.__init()
+
+    # --- helper methods --- #
+
+    def _contain_unusual_chars(self, word):
+        for char in self.UNUSUAL_CHARS:
+            if char in word:
+                return True
+        return False
+
+    # --- main methods --- #
+
+    def get_summary_statistics(self, word):
+        self.simulate(word)
+        return {
+            "word": word,
+            "num_wrong": self.get_wrong_tries(),
+            "word_length": len(word),
+            "contain_unusual_chars": self._contain_unusual_chars(word)
+        }
