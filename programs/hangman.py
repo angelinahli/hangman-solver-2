@@ -1,6 +1,8 @@
 import os
 import random
 
+from programs.vocabulary import sorted_words
+
 class Hangman:
 
     TOTAL_LIVES = 7
@@ -50,7 +52,7 @@ class InteractiveHangman(Hangman):
         for i in range(1, 8)}
 
     def __init__(self, debug=False):
-        Hangman.__init__(self, "goldilocks") # fix
+        Hangman.__init__(self, self._choose_random_word()) # fix
         
         # initialize word
         self.word_len = len(self.word)
@@ -62,6 +64,10 @@ class InteractiveHangman(Hangman):
         self.debug = debug
 
     # --- helper methods --- #
+
+    def _choose_random_word(self):
+        list_key = random.choice(list(sorted_words.keys()))
+        return random.choice(sorted_words[list_key])
 
     def _check_errors(self, char):
         not_alpha = not char.isalpha()
