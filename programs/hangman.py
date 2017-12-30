@@ -2,21 +2,58 @@ import random
 
 # from data.hangman_images import images
 
-class HangmanGame(object):
+class Hangman:
 
-    # IMGS = {i + 1: img.split("\n") for i, img in enumerate(images)}
-    TOTAL_LIVES = 5 # len(list(IMGS.keys()))
+    TOTAL_LIVES = 5
 
-    def __init__(self, debug=False):
-        # initialize word
-        self.word = "goldilocks" # fix
-        self.word_len = len(self.word)
-
-        # game control vars
+    def __init__(self, word, debug=False):
+        self.word = word
+        self.len_word_set = len(set(self.word))
         self.guessed_chars = {"correct": [], "wrong": []}
         self.lives_used = 0
         self.lost = False
         self.won = False
+
+    # --- helper methods --- #
+
+    def _has_lost(self):
+        return self.lives_used >= self.TOTAL_LIVES
+
+    def _check_lost(self):
+        if self._has_lost():
+            self.lost = True
+
+    def _has_won(self):
+        return len(self.guessed_chars.get("correct")) == self.len_word_set
+
+    def _check_won(self):
+        if self._has_won():
+            self.won = True
+
+    # --- main methods --- #
+
+    def guess_char(self, char):
+        # message resets each time
+        check_char = char.lower()
+
+        if check_char in self.word:
+            self.guessed_chars["correct"].append(check_char)
+        else:
+            self.guessed_chars["wrong"].append(check_char)
+            self.lives_used += 1
+
+        self._check_lost()
+        self._check_won()
+
+class InteractiveHangman(Hangman):
+
+    # IMGS = {i + 1: img.split("\n") for i, img in enumerate(images)}
+
+    def __init__(self, debug=False):
+        Hangman.__init__("goldilocks", debug) # fix
+        
+        # initialize word
+        self.word_len = len(self.word)
 
         # user feedback vars
         self.message = ""
