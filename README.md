@@ -1,6 +1,6 @@
 # Hangman Solver V.2.0
 
-Minimalist flask app built around an [old hangman solver program](https://github.com/angelinahli/hangman-solver) I wrote. Immense gratitude goes towards [Miguel Grinberg](url-to-flask-tutorial), who taught me how to create my first web app. 
+Minimalist flask app built around an [old hangman solver program](https://github.com/angelinahli/hangman-solver) I wrote. Immense gratitude goes towards [Miguel Grinberg](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world), who taught me how to create my first web app. 
 
 This program was written quickly and mostly as a learning opportunity for me, so it's quite possibly buggy!
 
