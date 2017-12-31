@@ -97,7 +97,7 @@ class InteractiveSolver:
     """
 
     UNKNOWN = "?"
-    WORD_EXAMPLE = "py?t?n"
+    WORD_EXAMPLE = "py?h?n"
 
     def __init__(self):
         self.errors = []
