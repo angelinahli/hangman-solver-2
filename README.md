@@ -20,7 +20,7 @@ Minimalist flask app built around an [old hangman solver program](url-to-my-old-
 * deploy the app
 
 ### optional
-* add a stats page for you to see the distribution of all hangman words in my corpus
+* add a stats page for you to see the distribution of all hangman words in my corpus (finish generate_stats page)
 * add a suggestions page for you to submit words that should be added to the corpus?
 
 ## Known bugs
