@@ -6,7 +6,7 @@ from programs.hangman import *
 from programs.solver import *
 
 # initialize game of hangman for the user
-game = None
+game = InteractiveHangman()
 
 @app.route("/")
 @app.route("/index")
@@ -21,9 +21,8 @@ def new_game():
     user_address = flask.request.remote_addr
     
     # to ensure that each unique ip address user gets their own game
-    if flask.request.method == "GET" and (game == None or 
-            game.user == user_address):
-        game = InteractiveHangman(user_address)
+    if flask.request.method == "GET":
+        game = InteractiveHangman()
 
     form = GuessForm()
     if form.validate_on_submit():
