@@ -13,7 +13,7 @@ Minimalist flask app built around an [old hangman solver program](url-to-my-old-
 
 ### most important
 * modify new_game.html to play a new game each time you refresh (look it up)
-* modify index.html to include more information about this game and the rules of hangman.
+* modify index.html to include the rules of hangman.
 * fix solver.InteractiveSolver._get_check_wrong_chars (look up the regex)
 * edit solve_word.html so the possible words appear better formatted (2 or 3 cols?)
 * draw(?) / resize and add a favicon
