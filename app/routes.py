@@ -15,8 +15,9 @@ def index():
 @app.route("/new_game", methods=["GET", "POST"])
 def new_game():
     global game # I'm not sure if this is the best way to do it?
-    if flask.request.method == "GET":
+    if flask.request.method == "GET" and flask.request.path == "/new_game":
         game = InteractiveHangman()
+        print(flask.request.path)
 
     form = GuessForm()
     if form.validate_on_submit():
