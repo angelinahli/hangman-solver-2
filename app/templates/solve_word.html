@@ -41,12 +41,13 @@
     {% else %}
         <h3>Best character to guess next: {{ next_guess }}</h3>
         <h4><br>Here are some words this might be:</h4>
-        <div class="row">
-            <ul>
+
+        <div class="container-fluid">
+            <div class="row">
                 {% for word in solver.get_possible_words() %}
-                <li>{{ word }}</li>
+                <div class="col-lg-4 col-sm-6">{{ word }}</div>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     {% endif %}
     {% endwith %}

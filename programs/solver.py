@@ -134,8 +134,7 @@ class InteractiveSolver:
         return word.lower().strip()
 
     def _get_check_wrong_chars(self, wrong_chars):
-        # non alpha numeric
-        return list(set(re.sub("", "", wrong_chars).lower()))
+        return list(set(re.sub("\W", "", wrong_chars).lower()))
 
     # --- public/user facing methods --- #
 
@@ -146,6 +145,9 @@ class InteractiveSolver:
         check_wrong_chars = self._get_check_wrong_chars(wrong_chars)
         if self._is_valid_word(check_word):
             self.solver = Solver(check_word, check_wrong_chars)
+
+    def get_len_word(self):
+        return len(self.solver.word)
 
     def get_possible_words(self):
         return self.solver.candidate_words
