@@ -51,9 +51,12 @@ class InteractiveHangman(Hangman):
     IMGS = {i: os.path.join("static", "img", "hangman{}.png".format(i + 1)) \
         for i in range(1, Hangman.TOTAL_LIVES + 1)}
 
-    def __init__(self, debug=False):
+    def __init__(self, user, debug=False):
         Hangman.__init__(self, self._choose_random_word()) # fix
         
+        # user = user's ip address.
+        self.user = user
+
         # initialize word
         self.word_len = len(self.word)
 
