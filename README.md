@@ -1,6 +1,6 @@
 # Hangman Solver V.2.0
 
-Minimalist flask app built around an [old hangman solver program](https://github.com/angelinahli/hangman-solver) I wrote. Immense gratitude goes towards [Miguel Grinberg](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world), who taught me how to create my first web app. 
+Minimalist flask app built around an [old hangman solver program](https://github.com/angelinahli/hangman-solver) I wrote. Immense gratitude goes towards [Miguel Grinberg](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world), who taught me how to create my first web app. Also thanks to [this page](https://progblog.io/How-to-deploy-a-Flask-App-to-Heroku/) which taught me how to deploy my app to herokuapp.
 
 This program was written quickly and mostly as a learning opportunity for me, so it's quite possibly buggy!
 
@@ -22,5 +22,6 @@ This program was written quickly and mostly as a learning opportunity for me, so
 
 ## Known bugs
 * The hangman game can't accomodate multiple users at the same time :( -- update: I think this might be fixed but I'll run some tests to figure it out later.
+* I'm not sure how to handle the config.py file. I should figure that out in time for the next app!
 * Many words seem to be missing from the vocabulary (might want to pull some additional words later)
 * See above to dos
