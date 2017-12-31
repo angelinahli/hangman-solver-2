@@ -12,8 +12,6 @@ Minimalist flask app built around an [old hangman solver program](url-to-my-old-
 ## To do
 
 ### most important
-* modify new_game.html to play a new game each time you refresh (look it up)
-* draw(?) / resize and add a favicon
 * deploy the app
 
 ### optional
