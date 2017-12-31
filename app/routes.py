@@ -20,9 +20,9 @@ def new_game():
 
     user_address = flask.request.remote_addr
     
-    # to ensure that each unique ip address user gets their own game
-    if flask.request.method == "GET":
-        game = InteractiveHangman()
+    # the following code is broken. I don't know why :(    
+    # if flask.request.method == "GET":
+    #     game = InteractiveHangman()
 
     form = GuessForm()
     if form.validate_on_submit():
