@@ -6,7 +6,7 @@ from programs.vocabulary import sorted_words
 
 class Hangman:
 
-    TOTAL_LIVES = 7
+    TOTAL_LIVES = 6
 
     def __init__(self, word):
         self.word = word.lower()
@@ -48,8 +48,8 @@ class Hangman:
 
 class InteractiveHangman(Hangman):
 
-    IMGS = {i: os.path.join("static", "img", "hangman{}.png".format(i)) \
-        for i in range(1, 8)}
+    IMGS = {i: os.path.join("static", "img", "hangman{}.png".format(i + 1)) \
+        for i in range(1, Hangman.TOTAL_LIVES + 1)}
 
     def __init__(self, debug=False):
         Hangman.__init__(self, self._choose_random_word()) # fix
@@ -60,7 +60,7 @@ class InteractiveHangman(Hangman):
         # user feedback vars
         self.message = ""
         self.errors = []
-        self.img = ""
+        self.img = os.path.join("static", "img", "hangman1.png")
         self.debug = debug
 
     # --- helper methods --- #
