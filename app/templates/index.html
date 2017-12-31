@@ -8,11 +8,9 @@
     <h2>About</h2>
     <p>This app uses character frequency analysis to find the optimal next best guesses for any hangman word you want to solve.</p>
 
-    <p>Play a game of hangman against the computer, <a href="{{ url_for('solve_word') }}">solve</a> a word you're struggling with, or <a href="{{ url_for('test_word') }}">test</a> your favorite hangman words to see how well they fare.</p>
+    <p><a href="{{ url_for('solve_word') }}">Solve</a> a word you're struggling with, or <a href="{{ url_for('test_word') }}">test</a> your favorite hangman words to see how well they fare.</p>
 
     <p>Here's a <a href="https://www.wikihow.com/Play-Hangman">refresher</a> on how to play Hangman!</p>
 
     <p>All the source code for this project can be found <a href="https://github.com/angelinahli/hangman-solver-2">here</a>.</p>
-
-    <p>(Note: the 'play' tab is currently buggy and is under construction. Sorry!)</p>
 {% endblock %}
