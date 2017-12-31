@@ -12,6 +12,23 @@ def index():
     return flask.render_template("index.html", 
         title="Home")
 
+@app.route("/new_game", methods=["GET", "POST"])
+def new_game():
+    global game # I'm not sure if this is the best way to do it?
+    if flask.request.method == "GET" and flask.request.path == "/new_game":
+        game = InteractiveHangman()
+        print(flask.request.path)
+
+    form = GuessForm()
+    if form.validate_on_submit():
+        game.guess_char(form.guess.data)
+    else:
+        game.errors = [] # reset errors
+    return flask.render_template("new_game.html", 
+        title="New Game", 
+        game=game, 
+        form=form)
+
 @app.route("/solve_word", methods=["GET", "POST"])
 def solve_word():
     form = SolverForm()

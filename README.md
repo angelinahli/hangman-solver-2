@@ -21,5 +21,7 @@ This program was written quickly and mostly as a learning opportunity for me, so
 * add a suggestions page for you to submit words that should be added to the corpus?
 
 ## Known bugs
+* The hangman game can't accomodate multiple users at the same time :(
+* The hangman game sometimes switches games. I'll handle this later.
 * I'm not sure how to handle the config.py file. I should figure that out in time for the next app!
 * Many words seem to be missing from the vocabulary (might want to pull some additional words later)

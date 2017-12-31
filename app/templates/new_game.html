@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not game.lost and not game.won %}
+    <!-- title -->
+    <div class="title">
+        <h1>Play a game of Hangman!<br></h1>
+    </div>
+
+    <!-- display image if any -->
+    <img src="{{ game.img }}" alt="Hangman image" width="40%">
+    
+    <!-- word to guess -->
+    <h2>Guess so far: <span style="color: #333333;">{{ game.get_current_guess() }}</span></h2>
+    <h3><br>The word I'm thinking of is {{ game.word_len }} letters long.</h3>
+    
+    <!-- some feedback if any -->
+    {% if game.message %}
+    <h3>{{ game.message }}</h3>
+    {% endif %}
+    
+    <!-- user input -->
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>Enter letter guess: {{ form.guess(size=10) }} {{ form.submit() }}</p>
+        {% for error in form.guess.errors %}
+        <span style="color: red;"><i>{{error}}</i></span><br>
+        {% endfor %}
+        {% for error in game.errors %}
+        <span style="color: red;"><i>{{error}}</i></span><br>
+        {% endfor %}
+        <p>({{ game.get_lives_left() }} wrong tries left)</p>
+    </form>
+    
+    <!-- guessed letters - formatted to a comma delimited list -->
+    {% if game.guessed_chars["correct"] or game.guessed_chars["wrong"] %}
+    <h2>Guesses</h2>
+    {% endif %}
+
+    {% if game.guessed_chars["correct"] %}
+    <p>Correct guesses: {{ game.get_correct_guesses() }}</p>
+    {% endif %}
+
+    {% if game.guessed_chars["wrong"] %}
+    <p>Wrong guesses: {{ game.get_wrong_guesses() }}</p>
+    {% endif %}
+
+{% else %}
+    {% if game.won %}
+    <div class="title">
+        <h1>Congratulations - you guessed it!!</h1>
+    </div>
+    {% else %}
+    <div class="title">
+        <h1>Sorry, you lost!</h1>
+    </div>
+    {% endif %}
+
+    <img src="{{ game.img }}" alt="Hangman image" width="40%">
+
+    <h2><br>The word I was thinking of was: <span style="color: #333333;">{{ game.word }}</span></h2>
+{% endif %}
+{% endblock %}
